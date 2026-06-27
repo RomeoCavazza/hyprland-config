@@ -9,8 +9,8 @@
 // The compiled CSS contains only literal hex/rgba values:
 // no @import, @define-color, or GTK-specific @color.
 
-@use '../../scss/variables' as *;
-@use '../../scss/mixins' as *;
+@use '../scss/variables' as *;
+@use '../scss/mixins' as *;
 
 * {
   font-family: "SpaceMono Nerd Font";
