@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-GAP_HELPER="/etc/nixos/config/bin/hypr-gap-state.sh"
-# shellcheck source=/etc/nixos/config/bin/hypr-gap-state.sh
+GAP_HELPER="$HOME/.local/bin/hypr-gap-state.sh"
+# shellcheck source=$HOME/.local/bin/hypr-gap-state.sh
 source "$GAP_HELPER"
 
-REPO_LAUNCHER="/etc/nixos/config/conky/start_edex_conky_compact.sh"
+REPO_LAUNCHER="$HOME/.config/conky/start_edex_conky_compact.sh"
 USER_LAUNCHER="${XDG_CONFIG_HOME:-$HOME/.config}/conky/start_edex_conky_compact.sh"
 CONKY_LAUNCHER="$REPO_LAUNCHER"
 STATE_FILE="${XDG_RUNTIME_DIR:-/tmp}/conky-left-gap.base"

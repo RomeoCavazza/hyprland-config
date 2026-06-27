@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-GAP_HELPER="/etc/nixos/config/bin/hypr-gap-state.sh"
-# shellcheck source=/etc/nixos/config/bin/hypr-gap-state.sh
+GAP_HELPER="$HOME/.local/bin/hypr-gap-state.sh"
+# shellcheck source=$HOME/.local/bin/hypr-gap-state.sh
 source "$GAP_HELPER"
 
 THEME="$HOME/.config/rofi/themes/apps-grid.rasi"
