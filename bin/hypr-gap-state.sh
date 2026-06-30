@@ -5,8 +5,6 @@ HYPR_CONKY_STATE_FILE="${XDG_RUNTIME_DIR:-/tmp}/conky-left-gap.base"
 HYPR_ROFI_PUSH_STATE_FILE="${XDG_RUNTIME_DIR:-/tmp}/rofi-push.state"
 HYPR_UI_LOCK_FILE="${XDG_RUNTIME_DIR:-/tmp}/hypr-ui-overlays.lock"
 HYPR_GAPS_OUT_FALLBACK="16 16 16 16"
-HYPR_ROFI_BLUR_SIZE=14
-HYPR_ROFI_BLUR_PASSES=8
 
 hypr_with_ui_lock() {
   local lock_dir lock_fd status
@@ -178,28 +176,6 @@ hypr_close_rofi_and_restore() {
 
 hypr_rofi_running() {
   pgrep -x rofi >/dev/null 2>&1
-}
-
-hypr_getoption_int() {
-  hyprctl getoption "$1" | awk '/int:/ {print $2; exit}'
-}
-
-hypr_capture_rofi_blur_state() {
-  HYPR_ROFI_OLD_BLUR_SIZE="$(hypr_getoption_int decoration:blur:size)"
-  HYPR_ROFI_OLD_BLUR_PASSES="$(hypr_getoption_int decoration:blur:passes)"
-  HYPR_ROFI_OLD_BLUR_IGNORE_OPACITY="$(hypr_getoption_int decoration:blur:ignore_opacity)"
-}
-
-hypr_apply_rofi_blur() {
-  hyprctl keyword decoration:blur:size "$HYPR_ROFI_BLUR_SIZE" >/dev/null 2>&1 || true
-  hyprctl keyword decoration:blur:passes "$HYPR_ROFI_BLUR_PASSES" >/dev/null 2>&1 || true
-  hyprctl keyword decoration:blur:ignore_opacity true >/dev/null 2>&1 || true
-}
-
-hypr_restore_rofi_blur_state() {
-  hyprctl keyword decoration:blur:size "${HYPR_ROFI_OLD_BLUR_SIZE:-5}" >/dev/null 2>&1 || true
-  hyprctl keyword decoration:blur:passes "${HYPR_ROFI_OLD_BLUR_PASSES:-5}" >/dev/null 2>&1 || true
-  hyprctl keyword decoration:blur:ignore_opacity "${HYPR_ROFI_OLD_BLUR_IGNORE_OPACITY:-1}" >/dev/null 2>&1 || true
 }
 
 hypr_close_overview() {
