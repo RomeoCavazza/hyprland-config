@@ -7,32 +7,19 @@ source "$GAP_HELPER"
 
 WIDTH=110
 ROFI_CMD=(rofi -show drun -theme "$HOME/.config/rofi/custom/column-tco.rasi" -normal-window)
-CONKY_STATE_FILE="${XDG_RUNTIME_DIR:-/tmp}/conky-left-gap.base"
-ROFI_PUSH_STATE_FILE="${XDG_RUNTIME_DIR:-/tmp}/rofi-push.state"
+ROFI_PUSH_STATE_FILE="$HYPR_ROFI_PUSH_STATE_FILE"
 
 # --- ACTIONS ---
 
-stop_conky_rails() {
-  pkill -f 'conky -q -c.*conky-left' >/dev/null 2>&1 || true
-  pkill -f 'conky -q -c.*conky-right' >/dev/null 2>&1 || true
-  pkill -f 'conky -q -c.*conky\.txt' >/dev/null 2>&1 || true
-  pkill -f 'conky .*system_panel' >/dev/null 2>&1 || true
-  pkill -f 'conky .*network_panel' >/dev/null 2>&1 || true
-
-  if [[ -f "$CONKY_STATE_FILE" ]]; then
-    hypr_restore_workspace_state "$CONKY_STATE_FILE" "$(hypr_get_global_gap_fallback "general:gaps_out" "16 16 16 16")"
-  fi
-}
-
 # Toggle logic
-if pgrep -x rofi >/dev/null 2>&1; then
-  pkill -x rofi
+if hypr_rofi_running; then
+  hypr_close_rofi
   hypr_restore_workspace_state "$ROFI_PUSH_STATE_FILE"
   exit 0
 fi
 
-stop_conky_rails
-hyprctl dispatch overview:close all >/dev/null 2>&1 || true
+hypr_stop_conky_rails_and_restore
+hypr_close_overview
 
 # Calculate and apply new gaps
 ACTIVE_WS="$(hyprctl activeworkspace -j | jq -r '.name // (.id | tostring)')"

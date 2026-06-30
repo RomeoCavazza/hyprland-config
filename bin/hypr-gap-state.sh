@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+HYPR_CONKY_STATE_FILE="${XDG_RUNTIME_DIR:-/tmp}/conky-left-gap.base"
+# shellcheck disable=SC2034 # Sourced by rofi-push.sh.
+HYPR_ROFI_PUSH_STATE_FILE="${XDG_RUNTIME_DIR:-/tmp}/rofi-push.state"
+HYPR_GAPS_OUT_FALLBACK="16 16 16 16"
+
 hypr_normalize_gap_values() {
   tr ',' ' ' <<<"$1" | xargs
 }
@@ -30,8 +35,9 @@ hypr_get_workspace_gaps() {
   local type="$2"
   local field="gaps${type^}"
   local option="general:gaps_${type}"
-  local fallback=$([[ "$type" == "in" ]] && echo "8 8 8 8" || echo "16 16 16 16")
-  local value
+  local fallback value
+
+  fallback=$([[ "$type" == "in" ]] && echo "8 8 8 8" || echo "16 16 16 16")
 
   value="$(hyprctl workspacerules -j 2>/dev/null | jq -r --arg ws "$workspace" --arg field "$field" '
     map(select(.workspaceString == $ws)) | .[0][$field] |
@@ -101,4 +107,45 @@ hypr_restore_workspace_state() {
   fi
 
   rm -f "$state_file"
+}
+
+hypr_conky_rails_running() {
+  pgrep -f 'conky -q -c.*conky-left' >/dev/null 2>&1 || \
+    pgrep -f 'conky -q -c.*conky-right' >/dev/null 2>&1 || \
+    pgrep -f 'conky -q -c.*conky\.txt' >/dev/null 2>&1 || \
+    pgrep -f 'conky .*system_panel' >/dev/null 2>&1 || \
+    pgrep -f 'conky .*network_panel' >/dev/null 2>&1
+}
+
+hypr_stop_conky_rails() {
+  pkill -f 'conky -q -c.*conky-left' >/dev/null 2>&1 || true
+  pkill -f 'conky -q -c.*conky-right' >/dev/null 2>&1 || true
+  pkill -f 'conky -q -c.*conky\.txt' >/dev/null 2>&1 || true
+  pkill -f 'conky .*system_panel' >/dev/null 2>&1 || true
+  pkill -f 'conky .*network_panel' >/dev/null 2>&1 || true
+}
+
+hypr_restore_conky_gaps_if_needed() {
+  if [[ -f "$HYPR_CONKY_STATE_FILE" ]]; then
+    hypr_restore_workspace_state \
+      "$HYPR_CONKY_STATE_FILE" \
+      "$(hypr_get_global_gap_fallback "general:gaps_out" "$HYPR_GAPS_OUT_FALLBACK")"
+  fi
+}
+
+hypr_stop_conky_rails_and_restore() {
+  hypr_stop_conky_rails
+  hypr_restore_conky_gaps_if_needed
+}
+
+hypr_close_rofi() {
+  pkill -x rofi >/dev/null 2>&1 || true
+}
+
+hypr_rofi_running() {
+  pgrep -x rofi >/dev/null 2>&1
+}
+
+hypr_close_overview() {
+  hyprctl dispatch overview:close all >/dev/null 2>&1 || true
 }

@@ -11,24 +11,7 @@ GAP_HELPER="$HOME/.local/bin/hypr-gap-state.sh"
 # shellcheck source=$HOME/.local/bin/hypr-gap-state.sh
 source "$GAP_HELPER"
 
-# 1. Close Rofi Sidebar
-if pgrep -x rofi >/dev/null 2>&1; then
-    pkill -x rofi
-fi
+hypr_close_rofi
+hypr_stop_conky_rails_and_restore
 
-# 2. Close Conky Dashboard
-# Simplified pkill logic from edex-conky-toggle / rofi-push
-pkill -f 'conky -q -c.*conky-left' >/dev/null 2>&1 || true
-pkill -f 'conky -q -c.*conky-right' >/dev/null 2>&1 || true
-pkill -f 'conky -q -c.*conky\.txt' >/dev/null 2>&1 || true
-pkill -f 'conky .*system_panel' >/dev/null 2>&1 || true
-pkill -f 'conky .*network_panel' >/dev/null 2>&1 || true
-
-# Restore gaps if Conky state exists (to avoid dead margins)
-CONKY_STATE_FILE="${XDG_RUNTIME_DIR:-/tmp}/conky-left-gap.base"
-if [[ -f "$CONKY_STATE_FILE" ]]; then
-    hypr_restore_workspace_state "$CONKY_STATE_FILE" "$(hypr_get_global_gap_fallback "general:gaps_out" "16 16 16 16")"
-fi
-
-# 3. Toggle Hyprspace Overview
 hyprctl dispatch overview:toggle all

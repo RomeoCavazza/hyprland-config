@@ -8,7 +8,7 @@ source "$GAP_HELPER"
 REPO_LAUNCHER="$HOME/.config/conky/start_edex_conky_compact.sh"
 USER_LAUNCHER="${XDG_CONFIG_HOME:-$HOME/.config}/conky/start_edex_conky_compact.sh"
 CONKY_LAUNCHER="$REPO_LAUNCHER"
-STATE_FILE="${XDG_RUNTIME_DIR:-/tmp}/conky-left-gap.base"
+STATE_FILE="$HYPR_CONKY_STATE_FILE"
 PANEL_WIDTH=296
 LEFT_PANEL_MARGIN=8
 RIGHT_PANEL_MARGIN=28
@@ -32,17 +32,8 @@ apply_conky_workspace_gaps() {
   hypr_apply_workspace_gaps "$workspace" "$gaps_in" "$new_gaps_out"
 }
 
-if pgrep -f 'conky -q -c.*conky-left' >/dev/null 2>&1 || \
-   pgrep -f 'conky -q -c.*conky-right' >/dev/null 2>&1 || \
-   pgrep -f 'conky .*system_panel' >/dev/null 2>&1; then
-  # Kill all conky variants
-  pkill -f 'conky -q -c.*conky-left' >/dev/null 2>&1 || true
-  pkill -f 'conky -q -c.*conky-right' >/dev/null 2>&1 || true
-  pkill -f 'conky -q -c.*conky\.txt' >/dev/null 2>&1 || true
-  pkill -f 'conky .*system_panel' >/dev/null 2>&1 || true
-  pkill -f 'conky .*network_panel' >/dev/null 2>&1 || true
-  
-  hypr_restore_workspace_state "$STATE_FILE" "$(hypr_get_global_gap_fallback "general:gaps_out" "16 16 16 16")"
+if hypr_conky_rails_running; then
+  hypr_stop_conky_rails_and_restore
   exit 0
 fi
 
@@ -56,8 +47,8 @@ if [[ ! -r "$CONKY_LAUNCHER" ]]; then
 fi
 
 # Conky, Rofi sidebar and Hyprspace Overview are mutually exclusive.
-pkill -x rofi >/dev/null 2>&1 || true
-hyprctl dispatch overview:close all >/dev/null 2>&1 || true
+hypr_close_rofi
+hypr_close_overview
 
 mapfile -t TARGET_WORKSPACES < <(hypr_list_target_workspaces)
 if [[ ${#TARGET_WORKSPACES[@]} -eq 0 ]]; then
@@ -71,22 +62,20 @@ for workspace in "${TARGET_WORKSPACES[@]}"; do
   gaps_in="$(hypr_get_workspace_gaps "$workspace" in)"
   gaps_out="$(hypr_get_workspace_gaps "$workspace" out)"
   if ! apply_conky_workspace_gaps "$workspace" "$gaps_in" "$gaps_out"; then
-    hypr_restore_workspace_state "$STATE_FILE" "$(hypr_get_global_gap_fallback "general:gaps_out" "16 16 16 16")"
+    hypr_restore_workspace_state "$STATE_FILE" "$(hypr_get_global_gap_fallback "general:gaps_out" "$HYPR_GAPS_OUT_FALLBACK")"
     exit 1
   fi
 done
 
 if ! bash "$CONKY_LAUNCHER"; then
-  hypr_restore_workspace_state "$STATE_FILE" "$(hypr_get_global_gap_fallback "general:gaps_out" "16 16 16 16")"
+  hypr_restore_workspace_state "$STATE_FILE" "$(hypr_get_global_gap_fallback "general:gaps_out" "$HYPR_GAPS_OUT_FALLBACK")"
   exit 1
 fi
 
 (
-  while pgrep -f 'conky -q -c.*conky-left' >/dev/null 2>&1 || \
-        pgrep -f 'conky -q -c.*conky-right' >/dev/null 2>&1 || \
-        pgrep -f 'conky -q -c.*conky\.txt' >/dev/null 2>&1; do
+  while hypr_conky_rails_running; do
     sleep 1
   done
 
-  hypr_restore_workspace_state "$STATE_FILE" "$(hypr_get_global_gap_fallback "general:gaps_out" "16 16 16 16")"
+  hypr_restore_workspace_state "$STATE_FILE" "$(hypr_get_global_gap_fallback "general:gaps_out" "$HYPR_GAPS_OUT_FALLBACK")"
 ) >/dev/null 2>&1 &
