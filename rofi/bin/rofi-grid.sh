@@ -3,11 +3,12 @@ set -euo pipefail
 
 GAP_HELPER="$HOME/.local/bin/hypr-gap-state.sh"
 # shellcheck source=$HOME/.local/bin/hypr-gap-state.sh
+# shellcheck disable=SC1091
 source "$GAP_HELPER"
 
 THEME="$HOME/.config/rofi/themes/apps-grid.rasi"
-WAYBAR_CFG="$HOME/.config/waybar/config.jsonc"
-WAYBAR_CSS="$HOME/.config/waybar/style.css"
+WAYBAR_CTL="$HOME/.local/bin/waybar-toggle"
+WAYBAR_WAS_RUNNING=0
 
 getopt_int() { hyprctl getoption "$1" | awk '/int:/ {print $2; exit}'; }
 
@@ -20,8 +21,9 @@ restore() {
   hyprctl keyword decoration:blur:passes "$OLD_PASSES" >/dev/null 2>&1 || true
   hyprctl keyword decoration:blur:ignore_opacity "$OLD_IGNORE" >/dev/null 2>&1 || true
 
-  # Always restart Waybar; avoid fragile conditions.
-  nohup waybar -c "$WAYBAR_CFG" -s "$WAYBAR_CSS" >/dev/null 2>&1 &
+  if (( WAYBAR_WAS_RUNNING )); then
+    "$WAYBAR_CTL" start
+  fi
 }
 trap restore EXIT INT TERM
 
@@ -31,8 +33,10 @@ hyprctl keyword decoration:blur:size 8 >/dev/null 2>&1
 # Rofi sidebar and Conky rails must not overlap.
 hypr_stop_conky_rails_and_restore
 
-# Kill waybar (match cmdline, version nix/wrapped friendly)
-pkill -u "$USER" -f 'waybar' 2>/dev/null || true
+if "$WAYBAR_CTL" status; then
+  WAYBAR_WAS_RUNNING=1
+  "$WAYBAR_CTL" stop
+fi
 
 # Run rofi (blocking)
 rofi -show drun -theme "$THEME"

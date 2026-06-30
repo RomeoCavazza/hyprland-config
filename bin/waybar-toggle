@@ -1,13 +1,55 @@
 #!/usr/bin/env bash
+set -euo pipefail
 
 # ==============================================================================
-# WAYBAR-TOGGLE (Robust detection for NixOS)
+# WAYBAR-TOGGLE (user-scoped lifecycle helper)
 # ==============================================================================
 
-# pgrep without -x to catch .waybar-wrapped or similar
-if pgrep waybar > /dev/null; then
-    pkill waybar
-else
-    # Start waybar in background, detached from terminal
-    waybar </dev/null >/dev/null 2>&1 & disown
-fi
+WAYBAR_CFG="${WAYBAR_CFG:-$HOME/.config/waybar/config.jsonc}"
+WAYBAR_CSS="${WAYBAR_CSS:-$HOME/.config/waybar/style.css}"
+WAYBAR_PATTERN='(^|/| )\.?waybar(-wrapped)?( |$)'
+
+waybar_running() {
+  pgrep -u "$(id -u)" -f "$WAYBAR_PATTERN" >/dev/null 2>&1
+}
+
+waybar_start() {
+  if waybar_running; then
+    return 0
+  fi
+
+  waybar -c "$WAYBAR_CFG" -s "$WAYBAR_CSS" </dev/null >/dev/null 2>&1 &
+  disown
+}
+
+waybar_stop() {
+  pkill -u "$(id -u)" -f "$WAYBAR_PATTERN" >/dev/null 2>&1 || true
+}
+
+case "${1:-toggle}" in
+  status)
+    waybar_running
+    ;;
+  start)
+    waybar_start
+    ;;
+  stop)
+    waybar_stop
+    ;;
+  restart)
+    waybar_stop
+    sleep 0.1
+    waybar_start
+    ;;
+  toggle)
+    if waybar_running; then
+      waybar_stop
+    else
+      waybar_start
+    fi
+    ;;
+  *)
+    echo "usage: waybar-toggle [status|start|stop|restart|toggle]" >&2
+    exit 2
+    ;;
+esac
