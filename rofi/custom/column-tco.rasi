@@ -12,6 +12,7 @@ configuration {
 
 * {
     c-teal:        #94E2D5;
+    c-panel:       rgba(17, 17, 27, 72%);
     c-selected-bg: #313244;
 
     /* Fully transparent by default */
@@ -22,21 +23,20 @@ configuration {
 window {
     transparency:     "real";
 
-    /* Fully transparent, with no black block or sticky blur */
-    background-color: transparent;
+    background-color: @c-panel;
 
-    /* Existing but invisible border */
     border:           2px;
-    border-color:     transparent;
-    border-radius:    0px 40px 40px 0px;
+    border-color:     rgba(148, 226, 213, 28%);
+    border-radius:    28px;
 
     /* Avoid false outlines */
     box-shadow:       0px 0px 0px 0px;
 
     location:         west;
     anchor:           west;
-    height:           96%;
-    y-offset:         0%;
+    height:           94%;
+    x-offset:         12px;
+    y-offset:         0px;
     width:            110px;
 }
 

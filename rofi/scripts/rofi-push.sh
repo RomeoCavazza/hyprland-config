@@ -6,7 +6,7 @@ GAP_HELPER="$HOME/.local/bin/hypr-gap-state.sh"
 # shellcheck disable=SC1091
 source "$GAP_HELPER"
 
-WIDTH=110
+WIDTH=122
 ROFI_CMD=(rofi -show drun -theme "$HOME/.config/rofi/custom/column-tco.rasi" -normal-window)
 ROFI_PUSH_STATE_FILE="$HYPR_ROFI_PUSH_STATE_FILE"
 ROFI_PUSH_RESTORED=0
