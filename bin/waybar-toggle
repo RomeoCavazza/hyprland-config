@@ -8,19 +8,20 @@ WAYBAR_CSS="${WAYBAR_CSS:-$HOME/.config/waybar/style.css}"
 WAYBAR_PATTERN='(^|/| )\.?waybar(-wrapped)?( |$)'
 
 waybar_running() {
-  pgrep -u "$(id -u)" -f "$WAYBAR_PATTERN" >/dev/null 2>&1
+  systemctl --user is-active --quiet waybar.service 2>/dev/null || pgrep -u "$(id -u)" -f "$WAYBAR_PATTERN" >/dev/null 2>&1
 }
 
 waybar_start() {
-  if waybar_running; then
-    return 0
+  if systemctl --user is-enabled --quiet waybar.service 2>/dev/null || systemctl --user status waybar.service >/dev/null 2>&1; then
+    systemctl --user start waybar.service
+  elif ! waybar_running; then
+    waybar -c "$WAYBAR_CFG" -s "$WAYBAR_CSS" </dev/null >/dev/null 2>&1 &
+    disown
   fi
-
-  waybar -c "$WAYBAR_CFG" -s "$WAYBAR_CSS" </dev/null >/dev/null 2>&1 &
-  disown
 }
 
 waybar_stop() {
+  systemctl --user stop waybar.service 2>/dev/null || true
   pkill -u "$(id -u)" -f "$WAYBAR_PATTERN" >/dev/null 2>&1 || true
 }
 

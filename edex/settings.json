@@ -2,7 +2,7 @@
   "shell": "/run/current-system/sw/bin/bash",
   "shellArgs": "",
   "cwd": "/home/tco",
-  "keyboard": "en-US",
+  "keyboard": "fr-FR",
   "theme": "tron",
   "termFontSize": 15,
   "audio": true,
