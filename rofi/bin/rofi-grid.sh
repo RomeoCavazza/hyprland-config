@@ -27,16 +27,20 @@ restore() {
 }
 trap restore EXIT INT TERM
 
+prepare_rofi_grid_overlay() {
+  hypr_stop_conky_rails_and_restore
+  hypr_close_overview
+}
+
 # Slightly boost blur.
 hyprctl keyword decoration:blur:size 8 >/dev/null 2>&1
 
-# Rofi sidebar and Conky rails must not overlap.
-hypr_with_ui_lock hypr_stop_conky_rails_and_restore
+hypr_with_ui_lock prepare_rofi_grid_overlay
 
 if "$WAYBAR_CTL" status; then
   WAYBAR_WAS_RUNNING=1
   "$WAYBAR_CTL" stop
 fi
 
-# Run rofi (blocking)
+# Grid is a global launcher overlay; it hides Waybar but does not push gaps.
 rofi -show drun -theme "$THEME"
