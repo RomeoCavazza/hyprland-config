@@ -10,6 +10,17 @@ WIDTH=122
 ROFI_CMD=(rofi -show drun -theme "$HOME/.config/rofi/custom/column-tco.rasi" -normal-window)
 ROFI_PUSH_STATE_FILE="$HYPR_ROFI_PUSH_STATE_FILE"
 ROFI_PUSH_RESTORED=0
+ROFI_PUSH_SESSION_RESTORED=0
+
+restore_rofi_push_session() {
+  if (( ROFI_PUSH_SESSION_RESTORED )); then
+    return 0
+  fi
+
+  hypr_with_ui_lock restore_rofi_push_state
+  hypr_restore_rofi_blur_state
+  ROFI_PUSH_SESSION_RESTORED=1
+}
 
 restore_rofi_push_state() {
   if (( ROFI_PUSH_RESTORED )); then
@@ -51,8 +62,10 @@ if hypr_rofi_running; then
   exit 0
 fi
 
+trap restore_rofi_push_session EXIT
+hypr_capture_rofi_blur_state
+hypr_apply_rofi_blur
 hypr_with_ui_lock prepare_rofi_push_overlay
-trap 'hypr_with_ui_lock restore_rofi_push_state' EXIT
 
 "${ROFI_CMD[@]}" || true
-hypr_with_ui_lock restore_rofi_push_state
+restore_rofi_push_session
