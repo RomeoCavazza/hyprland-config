@@ -3,6 +3,7 @@ set -euo pipefail
 
 GAP_HELPER="$HOME/.local/bin/hypr-gap-state.sh"
 # shellcheck source=$HOME/.local/bin/hypr-gap-state.sh
+# shellcheck disable=SC1091
 source "$GAP_HELPER"
 
 REPO_LAUNCHER="$HOME/.config/conky/start_edex_conky_compact.sh"
@@ -32,8 +33,39 @@ apply_conky_workspace_gaps() {
   hypr_apply_workspace_gaps "$workspace" "$gaps_in" "$new_gaps_out"
 }
 
+restore_conky_workspace_state() {
+  hypr_restore_workspace_state \
+    "$STATE_FILE" \
+    "$(hypr_get_global_gap_fallback "general:gaps_out" "$HYPR_GAPS_OUT_FALLBACK")"
+}
+
+prepare_conky_overlay() {
+  local active_ws workspace gaps_in gaps_out
+
+  # Conky, Rofi sidebar and Hyprspace Overview are mutually exclusive.
+  hypr_close_rofi_and_restore
+  hypr_close_overview
+
+  mapfile -t TARGET_WORKSPACES < <(hypr_list_target_workspaces)
+  if [[ ${#TARGET_WORKSPACES[@]} -eq 0 ]]; then
+    active_ws="$(hyprctl activeworkspace -j | jq -r '.name // (.id | tostring)')"
+    TARGET_WORKSPACES=("$active_ws")
+  fi
+
+  hypr_capture_workspace_state "$STATE_FILE" "${TARGET_WORKSPACES[@]}"
+
+  for workspace in "${TARGET_WORKSPACES[@]}"; do
+    gaps_in="$(hypr_get_workspace_gaps "$workspace" in)"
+    gaps_out="$(hypr_get_workspace_gaps "$workspace" out)"
+    if ! apply_conky_workspace_gaps "$workspace" "$gaps_in" "$gaps_out"; then
+      restore_conky_workspace_state
+      return 1
+    fi
+  done
+}
+
 if hypr_conky_rails_running; then
-  hypr_stop_conky_rails_and_restore
+  hypr_with_ui_lock hypr_stop_conky_rails_and_restore
   exit 0
 fi
 
@@ -46,29 +78,10 @@ if [[ ! -r "$CONKY_LAUNCHER" ]]; then
   exit 1
 fi
 
-# Conky, Rofi sidebar and Hyprspace Overview are mutually exclusive.
-hypr_close_rofi
-hypr_close_overview
-
-mapfile -t TARGET_WORKSPACES < <(hypr_list_target_workspaces)
-if [[ ${#TARGET_WORKSPACES[@]} -eq 0 ]]; then
-  ACTIVE_WS="$(hyprctl activeworkspace -j | jq -r '.name // (.id | tostring)')"
-  TARGET_WORKSPACES=("$ACTIVE_WS")
-fi
-
-hypr_capture_workspace_state "$STATE_FILE" "${TARGET_WORKSPACES[@]}"
-
-for workspace in "${TARGET_WORKSPACES[@]}"; do
-  gaps_in="$(hypr_get_workspace_gaps "$workspace" in)"
-  gaps_out="$(hypr_get_workspace_gaps "$workspace" out)"
-  if ! apply_conky_workspace_gaps "$workspace" "$gaps_in" "$gaps_out"; then
-    hypr_restore_workspace_state "$STATE_FILE" "$(hypr_get_global_gap_fallback "general:gaps_out" "$HYPR_GAPS_OUT_FALLBACK")"
-    exit 1
-  fi
-done
+hypr_with_ui_lock prepare_conky_overlay
 
 if ! bash "$CONKY_LAUNCHER"; then
-  hypr_restore_workspace_state "$STATE_FILE" "$(hypr_get_global_gap_fallback "general:gaps_out" "$HYPR_GAPS_OUT_FALLBACK")"
+  hypr_with_ui_lock restore_conky_workspace_state
   exit 1
 fi
 
@@ -77,5 +90,5 @@ fi
     sleep 1
   done
 
-  hypr_restore_workspace_state "$STATE_FILE" "$(hypr_get_global_gap_fallback "general:gaps_out" "$HYPR_GAPS_OUT_FALLBACK")"
+  hypr_with_ui_lock restore_conky_workspace_state
 ) >/dev/null 2>&1 &

@@ -31,7 +31,7 @@ trap restore EXIT INT TERM
 hyprctl keyword decoration:blur:size 8 >/dev/null 2>&1
 
 # Rofi sidebar and Conky rails must not overlap.
-hypr_stop_conky_rails_and_restore
+hypr_with_ui_lock hypr_stop_conky_rails_and_restore
 
 if "$WAYBAR_CTL" status; then
   WAYBAR_WAS_RUNNING=1

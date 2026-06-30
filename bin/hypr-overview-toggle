@@ -9,9 +9,14 @@ set -euo pipefail
 
 GAP_HELPER="$HOME/.local/bin/hypr-gap-state.sh"
 # shellcheck source=$HOME/.local/bin/hypr-gap-state.sh
+# shellcheck disable=SC1091
 source "$GAP_HELPER"
 
-hypr_close_rofi
-hypr_stop_conky_rails_and_restore
+prepare_overview_overlay() {
+  hypr_close_rofi_and_restore
+  hypr_stop_conky_rails_and_restore
+}
+
+hypr_with_ui_lock prepare_overview_overlay
 
 hyprctl dispatch overview:toggle all

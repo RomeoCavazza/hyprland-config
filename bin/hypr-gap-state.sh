@@ -3,7 +3,28 @@
 HYPR_CONKY_STATE_FILE="${XDG_RUNTIME_DIR:-/tmp}/conky-left-gap.base"
 # shellcheck disable=SC2034 # Sourced by rofi-push.sh.
 HYPR_ROFI_PUSH_STATE_FILE="${XDG_RUNTIME_DIR:-/tmp}/rofi-push.state"
+HYPR_UI_LOCK_FILE="${XDG_RUNTIME_DIR:-/tmp}/hypr-ui-overlays.lock"
 HYPR_GAPS_OUT_FALLBACK="16 16 16 16"
+
+hypr_with_ui_lock() {
+  local lock_dir lock_fd status
+
+  lock_dir="$(dirname "$HYPR_UI_LOCK_FILE")"
+  mkdir -p "$lock_dir"
+
+  exec {lock_fd}>"$HYPR_UI_LOCK_FILE"
+  flock -x "$lock_fd"
+
+  if "$@"; then
+    status=0
+  else
+    status=$?
+  fi
+
+  flock -u "$lock_fd" || true
+  exec {lock_fd}>&-
+  return "$status"
+}
 
 hypr_normalize_gap_values() {
   tr ',' ' ' <<<"$1" | xargs
@@ -138,8 +159,19 @@ hypr_stop_conky_rails_and_restore() {
   hypr_restore_conky_gaps_if_needed
 }
 
+hypr_restore_rofi_gaps_if_needed() {
+  if [[ -f "$HYPR_ROFI_PUSH_STATE_FILE" ]]; then
+    hypr_restore_workspace_state "$HYPR_ROFI_PUSH_STATE_FILE"
+  fi
+}
+
 hypr_close_rofi() {
   pkill -x rofi >/dev/null 2>&1 || true
+}
+
+hypr_close_rofi_and_restore() {
+  hypr_close_rofi
+  hypr_restore_rofi_gaps_if_needed
 }
 
 hypr_rofi_running() {
