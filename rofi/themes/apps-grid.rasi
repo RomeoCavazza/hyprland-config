@@ -81,21 +81,22 @@ listview {
   background-color: transparent;
 }
 
-/* Borderless tiles — just icon + label, no permanent box */
+/* Borderless tiles — just icon + label, no permanent fill */
 element {
   background-color: transparent;
-  border: 0;
-  border-radius: 20px;
-  padding: 16px 10px;
+  border: 2px;
+  border-color: transparent;
+  border-radius: 24px;
+  padding: 14px 8px;
 
   orientation: vertical;
   cursor: pointer;
 }
 
-/* Soft highlight appears ONLY under the hovered icon (hover-select) */
+/* Hover-select: electric outline only, no toggle fill behind the app. */
 element selected {
-  background-color: @hover;
-  border: 0;
+  background-color: transparent;
+  border-color: rgba(148, 226, 213, 68%);
 }
 
 element-icon {
