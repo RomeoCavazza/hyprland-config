@@ -1,9 +1,0 @@
-#!/usr/bin/env bash
-
-# ==============================================================================
-# HYPR-LAYOUT-TOGGLE (seamlessly integrated with hypr-canvas)
-# ==============================================================================
-
-# Trigger native plugin toggle to cleanly handle state transitions and geometry restore
-hyprctl dispatch canvas:toggle
-
