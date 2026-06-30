@@ -1,0 +1,28 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v26
+
+      - name: ShellCheck scripts
+        run: nix shell nixpkgs#shellcheck -c shellcheck -e SC2016 bin/* waybar/*.sh
+
+      - name: Validate required config
+        run: |
+          test -s hyprland.conf
+          test -s waybar/config.jsonc
+          test -s rofi/config.rasi
