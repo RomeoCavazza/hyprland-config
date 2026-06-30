@@ -6,8 +6,6 @@ GAP_HELPER="$HOME/.local/bin/hypr-gap-state.sh"
 # shellcheck disable=SC1091
 source "$GAP_HELPER"
 
-# Single deployed launcher path; the repo-vs-deployed config resolution lives
-# inside start_edex_conky_compact.sh itself (via NIXOS_CONFIG_REPO).
 CONKY_LAUNCHER="${XDG_CONFIG_HOME:-$HOME/.config}/conky/start_edex_conky_compact.sh"
 STATE_FILE="$HYPR_CONKY_STATE_FILE"
 PANEL_WIDTH=296
@@ -42,7 +40,6 @@ restore_conky_workspace_state() {
 prepare_conky_overlay() {
   local active_ws workspace gaps_in gaps_out
 
-  # Conky, Rofi sidebar and Hyprspace Overview are mutually exclusive.
   hypr_close_rofi_and_restore
   hypr_close_overview
 

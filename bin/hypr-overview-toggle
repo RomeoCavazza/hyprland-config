@@ -1,9 +1,5 @@
 #!/usr/bin/env bash
-# ==============================================================================
-# HYPR-OVERVIEW-TOGGLE (Mutual Exclusion Edition)
-# ==============================================================================
-# This script toggles the Hyprspace overview while ensuring that other
-# conflicting UI components (Rofi Sidebar and Conky Dashboard) are closed.
+# --- Hyprspace Overview Toggle ---
 
 set -euo pipefail
 

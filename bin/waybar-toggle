@@ -1,9 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# ==============================================================================
-# WAYBAR-TOGGLE (user-scoped lifecycle helper)
-# ==============================================================================
+# --- Waybar Lifecycle ---
 
 WAYBAR_CFG="${WAYBAR_CFG:-$HOME/.config/waybar/config.jsonc}"
 WAYBAR_CSS="${WAYBAR_CSS:-$HOME/.config/waybar/style.css}"

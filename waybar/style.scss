@@ -1,13 +1,4 @@
-/*!
- * style.scss - Waybar GTK stylesheet (source SCSS)
- * Compiled into style.css by Nix/Home Manager.
- * Optional local preview: scss-compile
- */
-
-// NOTE: mocha.css is not imported here.
-// Every @define-color value is resolved through $wb-* in _variables.scss.
-// The compiled CSS contains only literal hex/rgba values:
-// no @import, @define-color, or GTK-specific @color.
+/* Waybar GTK stylesheet. */
 
 @use '../scss/variables' as *;
 @use '../scss/mixins' as *;
@@ -17,29 +8,22 @@
   font-size: 15px;
 }
 
-// ===========================
-// MAIN BAR
-// ===========================
+// --- Main Bar ---
 
 window#waybar {
-  // FULL transparent
   background: transparent;
   color: $wb-accent;
 
-  // Existing but invisible border keeps proportions stable.
   border-radius: 14px;
   border: 2px solid transparent;
 
-  // Anti-glow / anti-contour GTK
   outline: none;
   box-shadow: none;
 
   padding: 6px 0;
 }
 
-// ===========================
-// MODULES
-// ===========================
+// --- Modules ---
 
 #clock, #battery, #cpu, #memory, #temperature,
 #pulseaudio, #tray, #bluetooth, #mpris,
@@ -63,9 +47,7 @@ window#waybar {
   color: $wb-accent;
 }
 
-// ===========================
-// TASKBAR - all icons
-// ===========================
+// --- Taskbar ---
 
 #taskbar {
   padding: 0 10px;
@@ -81,7 +63,6 @@ window#waybar {
   border-radius: 999px;
   transition: all 0.15s ease;
 
-  // Keep inactive buttons visible.
   opacity: 0.75;
 }
 
@@ -99,9 +80,7 @@ window#waybar {
   margin: 0;
 }
 
-// ===========================
-// WORKSPACES — DOTS ONLY
-// ===========================
+// --- Workspaces ---
 
 #workspaces {
   background: transparent;
@@ -113,7 +92,7 @@ window#waybar {
   background: transparent;
   @include no-decoration;
 
-  color: $wb-accent; // dots teal
+  color: $wb-accent;
   padding: 0;
   margin: 0 14px;
 
@@ -123,7 +102,6 @@ window#waybar {
   transition: none;
 }
 
-// Aucun effet hover visuel
 #workspaces button:hover {
   background: transparent;
   box-shadow: none;
@@ -131,7 +109,6 @@ window#waybar {
   color: $wb-accent;
 }
 
-// Workspace actif
 #workspaces button.active {
   background: transparent;
   box-shadow: none;
@@ -139,7 +116,6 @@ window#waybar {
   color: $wb-accent;
 }
 
-// Supprime totalement focus ring GTK
 #workspaces button:focus,
 #workspaces button:focus-visible {
   outline: none;

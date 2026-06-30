@@ -11,8 +11,6 @@ ROFI_CMD=(rofi -show drun -theme "$HOME/.config/rofi/custom/column-tco.rasi" -no
 ROFI_PUSH_STATE_FILE="$HYPR_ROFI_PUSH_STATE_FILE"
 ROFI_PUSH_RESTORED=0
 
-# Push is a left sidebar launcher; it reserves workspace space while open.
-
 restore_rofi_push_state() {
   if (( ROFI_PUSH_RESTORED )); then
     return 0
@@ -48,7 +46,6 @@ prepare_rofi_push_overlay() {
   fi
 }
 
-# Toggle logic
 if hypr_rofi_running; then
   hypr_with_ui_lock hypr_close_rofi_and_restore
   exit 0

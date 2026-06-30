@@ -32,7 +32,6 @@ prepare_rofi_grid_overlay() {
   hypr_close_overview
 }
 
-# Keep the Launchpad blur soft; the global theme already provides the glass.
 hyprctl keyword decoration:blur:size 6 >/dev/null 2>&1
 
 hypr_with_ui_lock prepare_rofi_grid_overlay
@@ -42,5 +41,4 @@ if "$WAYBAR_CTL" status; then
   "$WAYBAR_CTL" stop
 fi
 
-# Grid is a global launcher overlay; it hides Waybar but does not push gaps.
 rofi -show drun -theme "$THEME"

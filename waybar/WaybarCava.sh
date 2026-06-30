@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Not my own work. Credit to original author
-# ----- Optimized bars animation without much CPU usage increase --------
+# --- Cava Bars ---
 
 bar="▁▂▃▄▅▆▇█"
 dict="s/;//g"
@@ -34,7 +33,7 @@ EOF
 
 pkill -u "${USER:-$(id -un)}" -f "cava -p $config_file" 2>/dev/null || true
 
-# Convert digits to bars then hide "silence" (only ▁)
+# --- Output ---
 cava -p "$config_file" \
   | sed -u "$dict" \
   | awk '

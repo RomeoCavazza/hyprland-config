@@ -1,16 +1,5 @@
 #!/usr/bin/env bash
-# scss-compile — Compile Waybar SCSS sources into a preview directory.
-#
-# In production, Nix/Home Manager generates CSS during the build.
-# This script is for local previews without a full rebuild.
-#
-# Usage:
-#   scss-compile
-#   scss-compile /tmp/scss-preview
-#   SASS=dart-sass scss-compile
-#
-# Requirement: dart-sass (pkgs.dart-sass in home.nix)
-# Without a rebuild: nix shell nixpkgs#dart-sass -c scss-compile
+# --- SCSS Preview Compiler ---
 
 set -euo pipefail
 
