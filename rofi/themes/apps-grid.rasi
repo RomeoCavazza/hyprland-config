@@ -90,8 +90,8 @@ element {
 }
 
 element selected {
-  background-color: transparent;
-  border-color: rgba(148, 226, 213, 68%);
+  background-color: rgba(148, 226, 213, 14%);
+  border-color: transparent;
 }
 
 element-icon {
