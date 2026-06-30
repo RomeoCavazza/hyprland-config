@@ -4,7 +4,7 @@
   fg0:        rgba(255, 255, 255, 95%);   /* icon labels                       */
   fgDim:      rgba(255, 255, 255, 45%);   /* placeholder / prompt              */
 
-  scrim:      rgba(18, 20, 24, 42%);      /* darkened, blurred backdrop        */
+  scrim:      rgba(18, 20, 24, 34%);      /* darkened, blurred backdrop        */
   field:      rgba(255, 255, 255, 10%);   /* search-field glass                */
   fieldEdge:  rgba(255, 255, 255, 16%);   /* search-field hairline             */
 

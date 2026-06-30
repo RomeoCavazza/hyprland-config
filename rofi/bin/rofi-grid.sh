@@ -32,8 +32,8 @@ prepare_rofi_grid_overlay() {
   hypr_close_overview
 }
 
-# Slightly boost blur.
-hyprctl keyword decoration:blur:size 8 >/dev/null 2>&1
+# Keep the Launchpad blur soft; the global theme already provides the glass.
+hyprctl keyword decoration:blur:size 6 >/dev/null 2>&1
 
 hypr_with_ui_lock prepare_rofi_grid_overlay
 
