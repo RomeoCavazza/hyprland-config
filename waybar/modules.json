@@ -1,7 +1,7 @@
 {
   "custom/nixos": {
     "format": "",
-    "on-click": "wofi --show drun",
+    "on-click": "$HOME/.config/rofi/scripts/rofi-push.sh",
     "tooltip": true,
     "tooltip-format": "NixOS"
   },
@@ -50,7 +50,7 @@
   "cpu": {
     "format": "  {usage}%",
     "tooltip": true,
-    "on-click": "kitty htop &"
+    "on-click": "foot htop &"
   },
   "memory": {
     "format": "  {}%",
@@ -58,7 +58,6 @@
   },
   "temperature": {
     "interval": 10,
-    "hwmon-path": "/sys/devices/platform/coretemp.0/hwmon/hwmon4/temp1_input",
     "critical-threshold": 100,
     "format-critical": " {temperatureC}",
     "format": " {temperatureC}°C"

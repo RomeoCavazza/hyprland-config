@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -euo pipefail
 
 # Not my own work. Credit to original author
 # ----- Optimized bars animation without much CPU usage increase --------
@@ -11,7 +12,10 @@ for ((i = 0; i < bar_length; i++)); do
     dict+=";s/$i/${bar:$i:1}/g"
 done
 
-config_file="/tmp/bar_cava_config"
+runtime_dir="${XDG_RUNTIME_DIR:-/tmp}"
+config_file="${runtime_dir}/waybar-cava-${UID}.conf"
+trap 'rm -f "$config_file"' EXIT
+
 cat >"$config_file" <<'EOF'
 [general]
 framerate = 60
@@ -28,7 +32,7 @@ data_format = ascii
 ascii_max_range = 7
 EOF
 
-pkill -f "cava -p $config_file" 2>/dev/null || true
+pkill -u "${USER:-$(id -un)}" -f "cava -p $config_file" 2>/dev/null || true
 
 # Convert digits to bars then hide "silence" (only ▁)
 cava -p "$config_file" \
