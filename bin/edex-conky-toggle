@@ -6,9 +6,9 @@ GAP_HELPER="$HOME/.local/bin/hypr-gap-state.sh"
 # shellcheck disable=SC1091
 source "$GAP_HELPER"
 
-REPO_LAUNCHER="$HOME/.config/conky/start_edex_conky_compact.sh"
-USER_LAUNCHER="${XDG_CONFIG_HOME:-$HOME/.config}/conky/start_edex_conky_compact.sh"
-CONKY_LAUNCHER="$REPO_LAUNCHER"
+# Single deployed launcher path; the repo-vs-deployed config resolution lives
+# inside start_edex_conky_compact.sh itself (via NIXOS_CONFIG_REPO).
+CONKY_LAUNCHER="${XDG_CONFIG_HOME:-$HOME/.config}/conky/start_edex_conky_compact.sh"
 STATE_FILE="$HYPR_CONKY_STATE_FILE"
 PANEL_WIDTH=296
 LEFT_PANEL_MARGIN=8
@@ -67,10 +67,6 @@ prepare_conky_overlay() {
 if hypr_conky_rails_running; then
   hypr_with_ui_lock hypr_stop_conky_rails_and_restore
   exit 0
-fi
-
-if [[ ! -r "$CONKY_LAUNCHER" ]]; then
-  CONKY_LAUNCHER="$USER_LAUNCHER"
 fi
 
 if [[ ! -r "$CONKY_LAUNCHER" ]]; then

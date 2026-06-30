@@ -1,7 +1,7 @@
 {
   "custom/nixos": {
     "format": "",
-    "on-click": "$HOME/.config/rofi/scripts/rofi-push.sh",
+    "on-click": "~/.config/rofi/scripts/rofi-push.sh",
     "tooltip": true,
     "tooltip-format": "NixOS"
   },
@@ -20,7 +20,7 @@
     }
   },
   "custom/cava_mviz": {
-    "exec": "$HOME/.config/waybar/WaybarCava.sh",
+    "exec": "~/.config/waybar/WaybarCava.sh",
     "format": "{}"
   },
   "hyprland/workspaces": {
