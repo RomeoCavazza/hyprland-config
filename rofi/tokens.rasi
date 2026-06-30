@@ -1,8 +1,12 @@
+/* macOS-Launchpad palette — translucent whites, no accent colour.
+ * Imported only by themes/apps-grid.rasi (SUPER + ²). */
 * {
-  fg0:         rgba(201, 209, 225, 100%);
-  accent:      rgba(0, 234, 255, 100%);
-  glow:        rgba(0, 234, 255, 60%);
-  glowSoft:    rgba(0, 234, 255, 15%);
-  borderLight: rgba(255, 255, 255, 8%);
-  edge:        rgba(255, 255, 255, 8%);
+  fg0:        rgba(255, 255, 255, 95%);   /* icon labels                       */
+  fgDim:      rgba(255, 255, 255, 45%);   /* placeholder / prompt              */
+
+  scrim:      rgba(18, 20, 24, 42%);      /* darkened, blurred backdrop        */
+  field:      rgba(255, 255, 255, 10%);   /* search-field glass                */
+  fieldEdge:  rgba(255, 255, 255, 16%);   /* search-field hairline             */
+
+  hover:      rgba(255, 255, 255, 14%);   /* highlight under the hovered icon  */
 }
